@@ -1,0 +1,5 @@
+﻿{"Items": [
+    {"ExePath":"firefox.exe","Name":"fx","Regex":"http://.*\\.html"},
+    {"ExePath":"iexplore.exe","Name":"ie", Params:"%1"},"Regex":".*"}
+  ]
+}
