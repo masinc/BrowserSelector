@@ -1,5 +1,5 @@
 ﻿{"Items": [
-    {"ExePath":"firefox.exe","Name":"fx","Regex":"http://.*\\.html"},
-    {"ExePath":"iexplore.exe","Name":"ie", Params:"%1"},"Regex":".*"}
+    {"ExePath":"C:/Program Files/Mozilla Firefox/firefox.exe","Name":"Firefox","Regex":"http://.*\\.html"},
+    {"ExePath":"C:/Program Files/Internet Explorer/iexplore.exe","Name":"Interner Explorer", "Params":"%1","Regex":".*"}
   ]
 }
