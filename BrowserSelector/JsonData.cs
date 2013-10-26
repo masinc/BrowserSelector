@@ -61,8 +61,7 @@ namespace BrowserSelector
 
         public override string ToString()
         {
-            return Name + Environment.NewLine + ExePath + Environment.NewLine + Regex;
-
+            return string.Format("{0}\n{1}\n{2}\n{3}", Name, ExePath, Params, RegexString);                
         }
     }
 }

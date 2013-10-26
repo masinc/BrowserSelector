@@ -90,7 +90,7 @@ namespace BrowserSelector
 
                 if ( item == null )
                     continue;
-
+                Debug.WriteLine(item.ToString());
                 if ( item.IsSupportMultiUrl )
                 {
                     var urlListStr
@@ -102,8 +102,7 @@ namespace BrowserSelector
                     Process.Start(item.ExePath, @params);
                 }
                 else
-                {
-                    
+                {                    
                     foreach (var url in urlList)
                     {
                         var param = string.IsNullOrEmpty(item.Params)
@@ -111,9 +110,7 @@ namespace BrowserSelector
                           : item.Params.Replace("%1", url);
                         Process.Start ( item.ExePath, param);
                     }
-                    Error("");
                 }
-
             }
         }
 
@@ -135,9 +132,30 @@ urls
         }
         #endregion Help
         #region Install
-
+        [DllImport("shell32")]
+        static extern bool IsUserAnAdmin();
+        public static void RunAsSelf(string args)
+        {
+            var psi = new System.Diagnostics.ProcessStartInfo();
+            psi.FileName = Environment.GetCommandLineArgs()[0];
+            psi.Verb = "runas";
+            psi.Arguments = args;
+            Process.Start(psi);
+        }
         public static void InstallDefaultBrowser()
         {
+            if ( !IsUserAnAdmin() )
+            {
+                try
+                {
+                    RunAsSelf("--install");
+                }
+                catch(System.ComponentModel.Win32Exception e)
+                {
+                    //UACキャンセル時
+                }
+                return;
+            }                
             AllocConsole();
             Console.Write("BrowserSelector.exeをデフォルトブラウザに設定してもよろしいでしょうか？(Y/N):");
             if (Console.ReadKey(false).Key == ConsoleKey.Y)
@@ -145,14 +163,17 @@ urls
               Console.WriteLine();
               try
               {
-                  var value = "\"" + Environment.GetCommandLineArgs()[0] + "\" \"%1\"";
+                  var value = string.Format("\"{0}\" \"%1\"", Environment.GetCommandLineArgs()[0]);
+                  Debug.WriteLine(value);
                   WriteRegKey( Registry.ClassesRoot ,@"http\shell\open\command", value);
                   WriteRegKey( Registry.ClassesRoot ,@"https\shell\open\command", value);
+                  WriteRegKey(Registry.CurrentUser, @"Software\Classes\http\shell\open\command", value);
+                  WriteRegKey(Registry.CurrentUser, @"Software\Classes\https\shell\open\command", value);
               }
               catch ( Exception e)
-                  {
-                      Console.WriteLine(e.Message);
-                  }
+              {
+                Console.WriteLine(e.Message);
+              }
               Console.Read();
             }
         }
